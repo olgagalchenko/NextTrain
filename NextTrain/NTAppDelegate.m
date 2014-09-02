@@ -7,6 +7,7 @@
 //
 
 #import "NTAppDelegate.h"
+#import "FMDatabase.h"
 
 @interface NTAppDelegate ()
 {
@@ -21,6 +22,8 @@
 {
     // Insert code here to initialize your application
     [self activateStatusMenu];
+    
+    
 }
 
 - (void)activateStatusMenu
@@ -33,11 +36,22 @@
     [statusItem setHighlightMode:YES];
     
     nextTrainMenu = [[NSMenu alloc] init];
+    nextTrainMenu.delegate = self;
     [nextTrainMenu addItemWithTitle:@"Next train is: " action:nil keyEquivalent:@""];
     
     [statusItem setMenu:nextTrainMenu];
 }
 
+- (void)menuWillOpen:(NSMenu *)menu
+{
+    FMDatabase *db = [FMDatabase databaseWithPath:@"train_schedule.db"];
+    if (![db open])
+    {
+        NSLog(@"database didn't open");
+    }
 
+    
+    [db close];
+}
 
 @end
