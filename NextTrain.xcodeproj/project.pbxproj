@@ -14,6 +14,7 @@
 		77014AAE19B569470057C027 /* FMDatabaseQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 77014AA719B569470057C027 /* FMDatabaseQueue.m */; };
 		77014AAF19B569470057C027 /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 77014AAA19B569470057C027 /* FMResultSet.m */; };
 		77014AB119B56AF40057C027 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 77014AB019B56AF40057C027 /* libsqlite3.0.dylib */; };
+		77014AB419B56F910057C027 /* NTArrival.m in Sources */ = {isa = PBXBuildFile; fileRef = 77014AB319B56F910057C027 /* NTArrival.m */; };
 		776A38C119AEB7EB00E64737 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 776A38C019AEB7EB00E64737 /* Cocoa.framework */; };
 		776A38CB19AEB7EB00E64737 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 776A38C919AEB7EB00E64737 /* InfoPlist.strings */; };
 		776A38CD19AEB7EB00E64737 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 776A38CC19AEB7EB00E64737 /* main.m */; };
@@ -51,6 +52,8 @@
 		77014AA919B569470057C027 /* FMResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FMResultSet.h; path = fmdb/src/fmdb/FMResultSet.h; sourceTree = "<group>"; };
 		77014AAA19B569470057C027 /* FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FMResultSet.m; path = fmdb/src/fmdb/FMResultSet.m; sourceTree = "<group>"; };
 		77014AB019B56AF40057C027 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
+		77014AB219B56F910057C027 /* NTArrival.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTArrival.h; sourceTree = "<group>"; };
+		77014AB319B56F910057C027 /* NTArrival.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTArrival.m; sourceTree = "<group>"; };
 		776A38BD19AEB7EB00E64737 /* NextTrain.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NextTrain.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		776A38C019AEB7EB00E64737 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		776A38C319AEB7EB00E64737 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -162,6 +165,8 @@
 				776A38D519AEB7EB00E64737 /* MainMenu.xib */,
 				776A38D819AEB7EB00E64737 /* Images.xcassets */,
 				776A38C719AEB7EB00E64737 /* Supporting Files */,
+				77014AB219B56F910057C027 /* NTArrival.h */,
+				77014AB319B56F910057C027 /* NTArrival.m */,
 			);
 			path = NextTrain;
 			sourceTree = "<group>";
@@ -297,6 +302,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				77014AAB19B569470057C027 /* FMDatabase.m in Sources */,
+				77014AB419B56F910057C027 /* NTArrival.m in Sources */,
 				776A38D419AEB7EB00E64737 /* NTAppDelegate.m in Sources */,
 				77014AAF19B569470057C027 /* FMResultSet.m in Sources */,
 				77014AAD19B569470057C027 /* FMDatabasePool.m in Sources */,
