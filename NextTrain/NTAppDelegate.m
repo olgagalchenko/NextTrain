@@ -78,7 +78,8 @@
     
     NSMutableArray* homeStationArrivals = [NSMutableArray array];
     
-    NSString *queryString = [NSString stringWithFormat:@"SELECT stop_name,arrival_time,train_number FROM new_trips WHERE trip_name LIKE \"%%12OCT%%Weekday%%\" AND stop_name = \"Hillsdale Caltrain\""];
+    NSString* endStationQuery = [NSString stringWithFormat:@"SELECT train_number FROM new_trips WHERE trip_name LIKE  \"%%12OCT%%Weekday%%\" AND stop_name = \"San Carlos Caltrain\""];
+    NSString* queryString = [NSString stringWithFormat:@"SELECT stop_name, train_number, arrival_time FROM new_trips WHERE trip_name LIKE  \"%%12OCT%%Weekday%%\" AND stop_name = \"Hillsdale Caltrain\" AND train_number IN (%@) AND train_number%%2 = 0", endStationQuery];
     FMResultSet *resultSet = [db executeQuery:queryString];
     while ([resultSet next])
     {
