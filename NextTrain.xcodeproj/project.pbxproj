@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		77014A9E19B551680057C027 /* train_schedule.db in Resources */ = {isa = PBXBuildFile; fileRef = 77014A9D19B551680057C027 /* train_schedule.db */; };
 		776A38C119AEB7EB00E64737 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 776A38C019AEB7EB00E64737 /* Cocoa.framework */; };
 		776A38CB19AEB7EB00E64737 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 776A38C919AEB7EB00E64737 /* InfoPlist.strings */; };
 		776A38CD19AEB7EB00E64737 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 776A38CC19AEB7EB00E64737 /* main.m */; };
@@ -31,6 +32,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		77014A9D19B551680057C027 /* train_schedule.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = train_schedule.db; sourceTree = "<group>"; };
 		776A38BD19AEB7EB00E64737 /* NextTrain.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NextTrain.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		776A38C019AEB7EB00E64737 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		776A38C319AEB7EB00E64737 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -115,6 +117,7 @@
 		776A38C619AEB7EB00E64737 /* NextTrain */ = {
 			isa = PBXGroup;
 			children = (
+				77014A9D19B551680057C027 /* train_schedule.db */,
 				776A38D219AEB7EB00E64737 /* NTAppDelegate.h */,
 				776A38D319AEB7EB00E64737 /* NTAppDelegate.m */,
 				776A38D519AEB7EB00E64737 /* MainMenu.xib */,
@@ -233,6 +236,7 @@
 			files = (
 				776A38CB19AEB7EB00E64737 /* InfoPlist.strings in Resources */,
 				776A38D919AEB7EB00E64737 /* Images.xcassets in Resources */,
+				77014A9E19B551680057C027 /* train_schedule.db in Resources */,
 				776A38D119AEB7EB00E64737 /* Credits.rtf in Resources */,
 				776A38D719AEB7EB00E64737 /* MainMenu.xib in Resources */,
 			);
@@ -467,6 +471,7 @@
 				776A38F019AEB7EB00E64737 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		776A38F119AEB7EB00E64737 /* Build configuration list for PBXNativeTarget "NextTrainTests" */ = {
 			isa = XCConfigurationList;
@@ -475,6 +480,7 @@
 				776A38F319AEB7EB00E64737 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
