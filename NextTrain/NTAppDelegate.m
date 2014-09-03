@@ -15,6 +15,12 @@
     NSStatusItem* statusItem;
     NSMenu* nextTrainMenu;
 }
+
+@property (nonatomic) NSString *departingStation;
+@property (nonatomic) NSString *arrivingStation;
+@property NSMenuItem *departingStationsMenu;
+@property NSMenuItem *arrivingStationsMenu;
+
 @end
 
 @implementation NTAppDelegate
@@ -24,8 +30,15 @@
     // Insert code here to initialize your application
     [self activateStatusMenu];
     
-    [self fetchRelevantArrivals];
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"stationList"])
+        [self setStationList];
     
+    _departingStationsMenu = [self stationMenuItemWithTitle:@"Departing"];
+    _arrivingStationsMenu = [self stationMenuItemWithTitle:@"Arriving"];
+    
+    _departingStation = @"Hillsdale";
+    _arrivingStation = @"San Carlos";
+    [self fetchRelevantArrivalsWithOrigin:_departingStation destination:_arrivingStation];
 }
 
 - (void)activateStatusMenu
@@ -47,6 +60,8 @@
 - (void)menuWillOpen:(NSMenu *)menu
 {
     [menu removeAllItems];
+    [menu addItem:_departingStationsMenu];
+    [menu addItem:_arrivingStationsMenu];
     
     NSArray* arrivalsAtHomeStation = [[NSUserDefaults standardUserDefaults] objectForKey:@"table"];
     for (NSData* arrivalData in arrivalsAtHomeStation)
@@ -59,7 +74,56 @@
     
 }
 
-- (void)fetchRelevantArrivals
+- (NSMenuItem *)stationMenuItemWithTitle:(NSString *)title
+{
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"stationList"])
+        [self setStationList];
+    NSArray *stations = [[NSUserDefaults standardUserDefaults] objectForKey:@"stationList"];
+    NSMenuItem *menu = [[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""];
+    NSMenu *stationMenu = [[NSMenu alloc] init];
+    for (NSString *station in stations) {
+        [stationMenu addItemWithTitle:station action:@selector(setStation:) keyEquivalent:@""];
+    }
+    [menu setSubmenu:stationMenu];
+    return menu;
+}
+
+- (void)setStationList
+{
+    
+    NSString* stationQuery = [NSString stringWithFormat:@"SELECT DISTINCT stop_name FROM new_trips"];
+    NSArray *fetchedItems = [self fetchWithQuery:stationQuery];
+    
+    NSMutableArray *stationList = [NSMutableArray array];
+    
+    for (NSDictionary *dict in fetchedItems) {
+        NSString *stationName = [[dict objectForKey:@"stop_name"] stringByReplacingOccurrencesOfString:@" Caltrain" withString:@""];
+        [stationList addObject:stationName];
+    }
+    
+    [[NSUserDefaults standardUserDefaults] setObject:stationList forKey:@"stationList"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)fetchRelevantArrivalsWithOrigin:(NSString *)origin destination:(NSString *)destination
+{
+    NSString* endStationQuery = [NSString stringWithFormat:@"SELECT train_number FROM new_trips WHERE trip_name LIKE  \"%%12OCT%%Weekday%%\" AND stop_name = \"%@ Caltrain\"", destination];
+    NSString* queryString = [NSString stringWithFormat:@"SELECT stop_name, train_number, arrival_time FROM new_trips WHERE trip_name LIKE  \"%%12OCT%%Weekday%%\" AND stop_name = \"%@ Caltrain\" AND train_number IN (%@) AND train_number%%2 = 0", origin, endStationQuery];
+    
+    NSArray *fetchedItems = [self fetchWithQuery:queryString];
+    NSMutableArray* homeStationArrivals = [NSMutableArray array];
+    
+    for (NSDictionary *dict in fetchedItems) {
+        NTArrival* arrival = [[NTArrival alloc] initWithDictionary:dict];
+        NSData* encodedArrival = [NSKeyedArchiver archivedDataWithRootObject:arrival];
+        [homeStationArrivals addObject:encodedArrival];
+    }
+    
+    [[NSUserDefaults standardUserDefaults] setObject:homeStationArrivals forKey:@"table"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (NSArray *)fetchWithQuery:(NSString *)query
 {
     NSString *documents_dir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString *db_path = [documents_dir stringByAppendingPathComponent:[NSString stringWithFormat:@"train_schedule.db"]];
@@ -73,25 +137,36 @@
     if (![db open])
     {
         NSLog(@"failed to open database");
-        return;
+        return nil;
     }
     
-    NSMutableArray* homeStationArrivals = [NSMutableArray array];
+    NSMutableArray* results = [NSMutableArray array];
     
-    NSString* endStationQuery = [NSString stringWithFormat:@"SELECT train_number FROM new_trips WHERE trip_name LIKE  \"%%12OCT%%Weekday%%\" AND stop_name = \"San Carlos Caltrain\""];
-    NSString* queryString = [NSString stringWithFormat:@"SELECT stop_name, train_number, arrival_time FROM new_trips WHERE trip_name LIKE  \"%%12OCT%%Weekday%%\" AND stop_name = \"Hillsdale Caltrain\" AND train_number IN (%@) AND train_number%%2 = 0", endStationQuery];
-    FMResultSet *resultSet = [db executeQuery:queryString];
+    FMResultSet *resultSet = [db executeQuery:query];
     while ([resultSet next])
     {
-        NTArrival* arrival = [[NTArrival alloc] initWithDictionary:[resultSet resultDictionary]];
-        NSData* encodedArrival = [NSKeyedArchiver archivedDataWithRootObject:arrival];
-        [homeStationArrivals addObject:encodedArrival];
+        [results addObject:[resultSet resultDictionary]];
     }
     
     [db close];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:homeStationArrivals forKey:@"table"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    return results;
+}
+
+- (void)setStation:(id)sender
+{
+    NSMenuItem *clickedItem = (NSMenuItem *)sender;
+    NSMenu *parentMenu = [clickedItem menu];
+    NSString *parent = [[clickedItem parentItem] title];
+    if ([parent isEqualToString:@"Arriving"]) {
+        [[parentMenu itemWithTitle:_arrivingStation] setState:NSOffState];
+        _arrivingStation = [clickedItem title];
+    }
+    else if ([parent isEqualToString:@"Departing"]) {
+        [[parentMenu itemWithTitle:_departingStation] setState:NSOffState];
+        _departingStation = [clickedItem title];
+    }
+    [clickedItem setState:NSOnState];
+    [self fetchRelevantArrivalsWithOrigin:_departingStation destination:_arrivingStation];
 }
 
 @end
