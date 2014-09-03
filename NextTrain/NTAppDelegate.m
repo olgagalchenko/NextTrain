@@ -46,7 +46,7 @@
 
 - (void)menuWillOpen:(NSMenu *)menu
 {
-    
+    [menu removeAllItems];
     
     NSArray* arrivalsAtHomeStation = [[NSUserDefaults standardUserDefaults] objectForKey:@"table"];
     for (NSData* arrivalData in arrivalsAtHomeStation)
