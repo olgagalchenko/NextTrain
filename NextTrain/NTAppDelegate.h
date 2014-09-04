@@ -10,6 +10,6 @@
 
 @interface NTAppDelegate : NSObject <NSApplicationDelegate, NSMenuDelegate>
 
-@property (assign) IBOutlet NSWindow *window;
+@property (assign) IBOutlet NSMenuItem *preferences;
 
 @end

@@ -9,11 +9,14 @@
 #import "NTAppDelegate.h"
 #import "FMDatabase.h"
 #import "NTArrival.h"
+#import "NTPreferencesWC.h"
 
 @interface NTAppDelegate ()
 {
     NSStatusItem* statusItem;
     NSMenu* nextTrainMenu;
+    
+    NTPreferencesWC* preferencesWC;
 }
 @end
 
@@ -92,6 +95,12 @@
     
     [[NSUserDefaults standardUserDefaults] setObject:homeStationArrivals forKey:@"table"];
     [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (IBAction)preferencedClicked:(id)sender
+{
+    preferencesWC = [[NTPreferencesWC alloc] initWithWindowNibName:@"NTPreferencesWC"];
+    [preferencesWC showWindow:self];
 }
 
 @end
