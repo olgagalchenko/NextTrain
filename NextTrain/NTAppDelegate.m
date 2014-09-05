@@ -41,7 +41,7 @@
     
     _departingStation = @"Hillsdale";
     _arrivingStation = @"San Carlos";
-    [self fetchRelevantArrivalsWithOrigin:_departingStation destination:_arrivingStation];
+    [self fetchArrivalsWithOrigin:_departingStation destination:_arrivingStation];
 }
 
 - (void)activateStatusMenu
@@ -70,11 +70,9 @@
     for (NSData* arrivalData in arrivalsAtHomeStation)
     {
         NTArrival* arrival = [NSKeyedUnarchiver unarchiveObjectWithData:arrivalData];
-        NSString* arrivalStr = [arrival arrivalTimeString];
-        if (arrivalStr != nil)
-            [menu addItemWithTitle:arrivalStr action:nil keyEquivalent:@""];
+        NSString* arrivalMenuItemStr = [NSString stringWithFormat:@"#%ld  |  %@", (long)arrival.trainNumber, [arrival arrivalTimeString]];
+        [menu addItemWithTitle:arrivalMenuItemStr action:nil keyEquivalent:@""];
     }
-    
 }
 
 - (NSMenuItem *)stationMenuItemWithTitle:(NSString *)title
@@ -108,21 +106,31 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (void)fetchRelevantArrivalsWithOrigin:(NSString *)origin destination:(NSString *)destination
+- (void)fetchArrivalsWithOrigin:(NSString *)origin destination:(NSString *)destination
 {
     NSString* endStationQuery = [NSString stringWithFormat:@"SELECT train_number FROM new_trips WHERE trip_name LIKE  \"%%12OCT%%Weekday%%\" AND stop_name = \"%@ Caltrain\"", destination];
     NSString* queryString = [NSString stringWithFormat:@"SELECT stop_name, train_number, arrival_time FROM new_trips WHERE trip_name LIKE  \"%%12OCT%%Weekday%%\" AND stop_name = \"%@ Caltrain\" AND train_number IN (%@) AND train_number%%2 = 0", origin, endStationQuery];
     
     NSArray *fetchedItems = [self fetchWithQuery:queryString];
-    NSMutableArray* homeStationArrivals = [NSMutableArray array];
-    
-    for (NSDictionary *dict in fetchedItems) {
+    NSMutableArray* fromStationArrivals = [NSMutableArray array];
+    for (NSDictionary *dict in fetchedItems)
+    {
         NTArrival* arrival = [[NTArrival alloc] initWithDictionary:dict];
-        NSData* encodedArrival = [NSKeyedArchiver archivedDataWithRootObject:arrival];
-        [homeStationArrivals addObject:encodedArrival];
+        [fromStationArrivals addObject:arrival];
     }
     
-    [[NSUserDefaults standardUserDefaults] setObject:homeStationArrivals forKey:@"table"];
+    fromStationArrivals = (NSMutableArray*)[fromStationArrivals sortedArrayUsingComparator:^NSComparisonResult(NTArrival* obj1, NTArrival* obj2)
+    {
+        return [obj1 compare:obj2];
+    }];
+    
+    NSMutableArray* sortedArrivalData = [NSMutableArray array];
+    for (NTArrival* arrival in fromStationArrivals)
+    {
+        [sortedArrivalData addObject:[NSKeyedArchiver archivedDataWithRootObject:arrival]];
+    }
+    
+    [[NSUserDefaults standardUserDefaults] setObject:sortedArrivalData forKey:@"table"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
@@ -169,7 +177,7 @@
         _departingStation = [clickedItem title];
     }
     [clickedItem setState:NSOnState];
-    [self fetchRelevantArrivalsWithOrigin:_departingStation destination:_arrivingStation];
+    [self fetchArrivalsWithOrigin:_departingStation destination:_arrivingStation];
 }
 
 - (IBAction)preferencedClicked:(id)sender

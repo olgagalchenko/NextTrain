@@ -20,7 +20,11 @@
         
         NSDateFormatter* df = [[NSDateFormatter alloc] init];
         [df setDateFormat:@"HH':'mm':'ss"];
-        self.arrivalTime = [df dateFromString:dict[@"arrival_time"]];
+        NSString* arrivalTimeStr = dict[@"arrival_time"];
+        if ([arrivalTimeStr hasPrefix:@"24"])
+            arrivalTimeStr = [arrivalTimeStr stringByReplacingCharactersInRange:NSMakeRange(0, 2) withString:@"00"];
+        
+        self.arrivalTime = [df dateFromString:arrivalTimeStr];
     }
     
     return self;
@@ -41,7 +45,7 @@
 - (NSString*)arrivalTimeString
 {
     NSDateFormatter* df = [[NSDateFormatter alloc] init];
-    [df setDateFormat:@"HH':'mm':'ss"];
+    [df setDateFormat:@"hh:mm a"];
     
     return [df stringFromDate:self.arrivalTime];
 }
@@ -54,5 +58,8 @@
     [encoder encodeObject:self.arrivalTime forKey:@"arrival_time"];
 }
 
-
+- (NSComparisonResult)compare:(NTArrival*)obj
+{
+    return [self.arrivalTime compare:obj.arrivalTime];
+}
 @end

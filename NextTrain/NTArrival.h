@@ -16,4 +16,5 @@
 
 - (id)initWithDictionary:(NSDictionary*)dict;
 - (NSString*)arrivalTimeString;
+- (NSComparisonResult)compare:(NTArrival*)obj;
 @end
