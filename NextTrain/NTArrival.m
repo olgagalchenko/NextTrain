@@ -60,6 +60,17 @@
 
 - (NSComparisonResult)compare:(NTArrival*)obj
 {
-    return [self.arrivalTime compare:obj.arrivalTime];
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit) fromDate:self.arrivalTime];
+    NSInteger lhsHour = [components hour];
+    
+    components = [calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit) fromDate:obj.arrivalTime];
+    NSInteger rhsHour = [components hour];
+    if (lhsHour < 3)
+        lhsHour+=24;
+    if (rhsHour < 3)
+        rhsHour+=24;
+    
+    return [@(lhsHour) compare:@(rhsHour)];
 }
 @end
